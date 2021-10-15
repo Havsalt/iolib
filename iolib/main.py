@@ -218,11 +218,10 @@ if __name__ == "__main__":
     print("\n# Example 1\n")
     print("Hello world!")
     result1 = selection(
-        "How is your day?",
         "good",
         "bad",
         "don't want to talk about it...",
-        q=True,  # case 'True': first argument will be treated as a question
+        prompt="How is your day?",
         deco="- ",
         capitalize=True
     )
