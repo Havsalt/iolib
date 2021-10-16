@@ -3,11 +3,17 @@ import sys
 from typing import Any
 
 
-__all__ = ["selection", "input_write", "OverloadUnmatched", "overload"]
+__all__ = [
+    "selection",
+    "input_write",
+    "input_hidden",
+    "OverloadUnmatched",
+    "overload"
+]
 __author__ = "FloatingInt"
 
 
-def selection(*options, prompt: str = None, capitalize: bool = False, deco: str = " ") -> Any:
+def selection(*options, prompt: Any = None, capitalize: bool = False, deco: str = " ") -> Any:
     """
     Navigate up or down to select an option.
     Use PgUp/PgDown to navigate between options.
@@ -71,7 +77,7 @@ def selection(*options, prompt: str = None, capitalize: bool = False, deco: str 
                     curr += 1
 
 
-def input_write(prompt: Any = "", edit: Any = "") -> Any:
+def input_write(prompt: Any = "", edit: Any = "") -> str:
     """
     Based on builtin function 'input'.
     Difference is that argument 'edit' is shown at start (with argument 'prompt') and can be edited.
@@ -101,7 +107,8 @@ def input_write(prompt: Any = "", edit: Any = "") -> Any:
     while True:
         if msvcrt.kbhit():
             key = msvcrt.getch()
-            last_key_copy = last_key  # use copy of 'last_key' later
+            # use copy of 'last_key' later (next iteration)
+            last_key_copy = last_key
             last_key = key  # store key for later use
             if key == ENTER:
                 # cleanup
@@ -153,6 +160,53 @@ def input_write(prompt: Any = "", edit: Any = "") -> Any:
                 n = size - curr
                 if n > 0:  # to prevent when n == 0
                     sys.stdout.write(f"\u001b[{n}D")  # f-string
+
+
+def input_hidden(prompt: Any = "") -> str:
+    """
+    Based on builtin function 'input'.
+    Displays the prompt but does NOT show new letters as new keys are pressed.
+    Adds a weak layer of security.
+
+    Parameters
+    ----------
+    prompt : `optional`, default: `" "`
+        - The prompt string, if given, is printed to standard output without a trailing newline before reading input
+    """
+    sys.stdout.write(prompt)
+    written = []
+    last_key = ""
+
+    # local contants
+    ENTER = b"\r"
+    BACKSPACE = b"\x08"
+    SPECIAL = b"\x00"
+    # does not append to 'written' when 'IGNORE' is recieved right before (special char)
+    IGNORE = [b"M", b"K", b"H", b"P"]
+
+    while True:
+        if msvcrt.kbhit():
+            key = msvcrt.getch()
+            last_key_copy = last_key  # use copy of 'last_key' later
+            last_key = key  # store key for later use (next iteration)
+            if key == ENTER:
+                # cleanup
+                sys.stdout.write("\n")
+                return "".join(written)  # return as string
+
+            elif key == BACKSPACE:
+                if written:  # remove last letter if not empty
+                    written.pop()
+
+            else:  # adds support for uppercase letter 'M', 'K, 'H' and 'P'
+                if key == SPECIAL:
+                    continue
+                elif key in IGNORE:
+                    if last_key_copy == SPECIAL:
+                        continue
+                # store letter
+                letter = key.decode()
+                written.append(letter)
 
 
 class OverloadUnmatched(TypeError):
@@ -235,6 +289,12 @@ if __name__ == "__main__":
 
     # Example 3
     print("\n# Example 3\n")
+    # Tip: have a space at the end of first argument 'promt' (like "Hello ")
+    result3 = input_hidden("Can't see what you type:")
+    print("Result:", result3)
+
+    # Example 4
+    print("\n# Example 4\n")
 
     @overload
     def my_function(a: int, b: int) -> int:
