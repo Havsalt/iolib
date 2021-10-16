@@ -1,9 +1,13 @@
 from setuptools import setup
 
 
+__version__ = "0.3.0"
+__author__ = "FloatingInt"
+__doc__ = "IO library inspired by the builtin function 'input'"
+
 setup(
     name="iolib",
-    version="0.2.0",
-    description="IO library inspired by the builtin function 'input'",
-    author="FloatingInt",
+    version=__version__,
+    description=__doc__,
+    author=__author__,
 )
