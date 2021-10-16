@@ -1,3 +1,15 @@
+"""
+IO library inspired by the builtin function 'input'
+* selection
+* input_write
+* input_hidden
+
+Also contains decorator 'overload'
+- Used to define a function multiple times
+- Distinguishes by looking at argument types
+- Return types does not make it distinguisable 
+"""
+
 import msvcrt
 import sys
 from typing import Any
