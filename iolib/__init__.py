@@ -3,6 +3,7 @@ IO library inspired by the builtin function 'input'
 * selection
 * input_write
 * input_hidden
+* IODisplay
 
 Also contains decorator 'overload'
 - Used to define a function multiple times
