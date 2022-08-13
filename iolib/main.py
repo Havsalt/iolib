@@ -4,7 +4,9 @@ Main content of iolib
 
 import sys
 import msvcrt
-from typing import Any
+import threading
+from typing import Any, Callable
+from collections.abc import Iterable
 
 
 __all__ = [
